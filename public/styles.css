@@ -75,6 +75,33 @@ button, input { font: inherit; }
   box-shadow: 0 0 0 3px rgba(180, 243, 109, .08);
 }
 
+.close-app-button,
+.cancel-button {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: #b7becc;
+  background: var(--surface-raised);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.close-app-button:hover:not(:disabled),
+.cancel-button:hover:not(:disabled) {
+  border-color: rgba(255, 133, 138, .5);
+  color: #ffb0b3;
+}
+
+.close-app-button:disabled,
+.cancel-button:disabled {
+  cursor: wait;
+  opacity: .65;
+}
+
+.cancel-button { margin-left: auto; }
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -378,12 +405,14 @@ form > label {
 .job-panel.is-running .job-icon { animation: pulse 1.2s ease-in-out infinite; }
 .job-panel.is-failed .job-icon { background: #ff777d; }
 .job-panel.is-completed .job-icon { background: var(--accent); }
+.job-panel.is-cancelled .job-icon { background: #9298aa; }
 .job-heading > div { flex: 1; }
 .job-heading strong { font-size: 12px; }
 .job-heading p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
 .job-status { color: #9da4b5; font-size: 9px; font-weight: 700; letter-spacing: .8px; }
 .is-failed .job-status { color: #ff858a; }
 .is-completed .job-status { color: var(--accent); }
+.is-cancelled .job-status { color: #aab1c0; }
 
 .progress-meta {
   display: flex;
@@ -538,10 +567,13 @@ form > label {
 @media (max-width: 620px) {
   .page-shell { padding: 0 20px; }
   .topbar { height: 70px; }
-  .topbar-actions { gap: 8px; }
+  .topbar-actions { gap: 6px; }
   .language-picker > span { display: none; }
   .language-picker select { min-height: 32px; }
   .local-badge { padding: 7px 9px; }
+  .close-app-button { min-height: 32px; padding: 0 7px; font-size: 9px; }
+  .job-heading { flex-wrap: wrap; }
+  .cancel-button { margin-left: auto; }
   .hero { padding: 58px 0 46px; }
   h1 { letter-spacing: -2.5px; }
   .download-card { margin-top: 30px; padding: 20px 16px; }

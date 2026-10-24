@@ -3,6 +3,8 @@ const input = document.querySelector("#video-url");
 const downloadType = document.querySelector("#download-type");
 const chromeCookies = document.querySelector("#use-chrome-cookies");
 const languageSelect = document.querySelector("#language-select");
+const cancelButton = document.querySelector("#cancel-button");
+const closeAppButton = document.querySelector("#close-app-button");
 const button = document.querySelector("#download-button");
 const panel = document.querySelector("#job-panel");
 const title = document.querySelector("#job-title");
@@ -89,6 +91,16 @@ const messages = {
     runningStatus: "IN PROGRESS",
     completedStatus: "COMPLETED",
     failedStatus: "ERROR",
+    cancellingStatus: "CANCELLING",
+    cancelledStatus: "CANCELLED",
+    cancellingTitle: "Cancelling download",
+    cancelledTitle: "Download cancelled",
+    cancelledDescription: "The download was cancelled.",
+    cancelDownload: "Cancel download",
+    cancelFailed: "Could not cancel the download.",
+    closeApp: "Close SDown",
+    closeConfirm: "Close SDown now? Any active download will be cancelled.",
+    closingApp: "Closing SDown...",
     preparingPython: "Starting the Python process...",
     downloadPreparing: "Preparing download",
     ffmpegNotReady: "FFmpeg is not ready",
@@ -121,6 +133,11 @@ const messages = {
     ffmpegBundledReady: "System FFmpeg not found; bundled FFmpeg is ready.",
     ffmpegMissing: "Bundled FFmpeg executable was not found.",
     invalidUrl: "Enter a valid http or https URL.",
+    unsupportedDownload: "This link or media format is not supported. Check that the link is correct and publicly accessible.",
+    accessDownload: "The source requires authentication or refused the request. Check your access and any required sign-in settings.",
+    networkDownload: "The download could not finish because of a network or source-server issue. Check your connection and try again.",
+    ffmpegDownload: "FFmpeg could not process the media. Check available disk space and FFmpeg error details.",
+    genericDownloadError: "The download could not finish. Check the link and process details, then try again.",
     downloadAlreadyRunning: "A download is already in progress.",
     ffmpegServerNotReady: "FFmpeg is not ready.",
     compatibleMp4: "Compatible MP4 stream found; skipping re-encoding.",
@@ -196,6 +213,16 @@ const messages = {
     runningStatus: "İŞLENİYOR",
     completedStatus: "TAMAMLANDI",
     failedStatus: "HATA",
+    cancellingStatus: "İPTAL EDİLİYOR",
+    cancelledStatus: "İPTAL EDİLDİ",
+    cancellingTitle: "İndirme iptal ediliyor",
+    cancelledTitle: "İndirme iptal edildi",
+    cancelledDescription: "İndirme iptal edildi.",
+    cancelDownload: "İndirmeyi iptal et",
+    cancelFailed: "İndirme iptal edilemedi.",
+    closeApp: "SDown'u kapat",
+    closeConfirm: "SDown kapatılsın mı? Devam eden indirme iptal edilecek.",
+    closingApp: "SDown kapatılıyor...",
     preparingPython: "Python işlemi başlatılıyor...",
     downloadPreparing: "İndirme hazırlanıyor",
     ffmpegNotReady: "FFmpeg hazır değil",
@@ -228,6 +255,11 @@ const messages = {
     ffmpegBundledReady: "Sistemde FFmpeg yok; uygulamayla gelen FFmpeg hazır.",
     ffmpegMissing: "Uygulamayla gelen FFmpeg dosyası bulunamadı.",
     invalidUrl: "Geçerli bir http veya https bağlantısı girin.",
+    unsupportedDownload: "Bu bağlantı veya medya biçimi desteklenmiyor. Bağlantının herkese açık ve doğru olduğunu kontrol edin.",
+    accessDownload: "Kaynak erişim veya oturum gerektiriyor ya da isteği reddetti. Erişim yetkinizi ve gerekli oturum ayarlarını kontrol edin.",
+    networkDownload: "Ağ bağlantısı veya kaynak sunucu nedeniyle indirme tamamlanamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.",
+    ffmpegDownload: "FFmpeg medyayı işleyemedi. Disk alanını ve FFmpeg hata ayrıntılarını kontrol edin.",
+    genericDownloadError: "İndirme tamamlanamadı. Bağlantıyı ve işlem ayrıntılarını kontrol edip tekrar deneyin.",
     downloadAlreadyRunning: "Devam eden bir indirme zaten var.",
     ffmpegServerNotReady: "FFmpeg hazır değil.",
     compatibleMp4: "Uyumlu MP4 akışı bulundu; yeniden kodlama atlanıyor.",
@@ -303,6 +335,16 @@ const messages = {
     runningStatus: "ВЫПОЛНЯЕТСЯ",
     completedStatus: "ГОТОВО",
     failedStatus: "ОШИБКА",
+    cancellingStatus: "ОТМЕНА",
+    cancelledStatus: "ОТМЕНЕНО",
+    cancellingTitle: "Отмена загрузки",
+    cancelledTitle: "Загрузка отменена",
+    cancelledDescription: "Загрузка была отменена.",
+    cancelDownload: "Отменить загрузку",
+    cancelFailed: "Не удалось отменить загрузку.",
+    closeApp: "Закрыть SDown",
+    closeConfirm: "Закрыть SDown? Текущая загрузка будет отменена.",
+    closingApp: "Закрытие SDown...",
     preparingPython: "Запуск процесса Python...",
     downloadPreparing: "Подготовка загрузки",
     ffmpegNotReady: "FFmpeg не готов",
@@ -335,6 +377,11 @@ const messages = {
     ffmpegBundledReady: "Системный FFmpeg не найден; встроенный FFmpeg готов.",
     ffmpegMissing: "Не найден встроенный исполняемый файл FFmpeg.",
     invalidUrl: "Укажите правильную ссылку http или https.",
+    unsupportedDownload: "Эта ссылка или формат не поддерживается. Проверьте правильность и общедоступность ссылки.",
+    accessDownload: "Источник требует входа или отклонил запрос. Проверьте права доступа и настройки авторизации.",
+    networkDownload: "Не удалось завершить загрузку из-за сети или сервера источника. Проверьте подключение и повторите попытку.",
+    ffmpegDownload: "FFmpeg не удалось обработать медиафайл. Проверьте свободное место и сведения об ошибке FFmpeg.",
+    genericDownloadError: "Не удалось завершить загрузку. Проверьте ссылку и сведения о процессе, затем повторите попытку.",
     downloadAlreadyRunning: "Загрузка уже выполняется.",
     ffmpegServerNotReady: "FFmpeg не готов.",
     compatibleMp4: "Найден совместимый поток MP4; повторное кодирование пропущено.",
@@ -391,6 +438,11 @@ function localizeBackendText(text) {
     ["Uygulamayla gelen FFmpeg dosyası bulunamadı.", t("ffmpegMissing")],
     ["Uyumlu MP4 akışı bulundu; yeniden kodlama atlanıyor.", t("compatibleMp4")],
     ["Geçerli bir http veya https bağlantısı girin.", t("invalidUrl")],
+    ["Bu bağlantı veya medya biçimi desteklenmiyor. Bağlantının herkese açık ve doğru olduğunu kontrol edin.", t("unsupportedDownload")],
+    ["Kaynak erişim veya oturum gerektiriyor ya da isteği reddetti. Erişim yetkinizi ve gerekli oturum ayarlarını kontrol edin.", t("accessDownload")],
+    ["Ağ bağlantısı veya kaynak sunucu nedeniyle indirme tamamlanamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.", t("networkDownload")],
+    ["FFmpeg işlemi başarısız oldu. Disk alanını ve FFmpeg hata ayrıntılarını kontrol edin.", t("ffmpegDownload")],
+    ["İndirme tamamlanamadı. Bağlantıyı ve işlem ayrıntılarını kontrol edip tekrar deneyin.", t("genericDownloadError")],
     ["Devam eden bir indirme zaten var.", t("downloadAlreadyRunning")],
     ["FFmpeg hazır değil.", t("ffmpegServerNotReady")],
   ];
@@ -492,6 +544,10 @@ function renderProgress(progress, jobStatus) {
     ? t("downloadFinished")
     : jobStatus === "failed"
       ? t("downloadFailed")
+      : jobStatus === "cancelled"
+        ? t("cancelledDescription")
+        : jobStatus === "cancelling"
+          ? t("cancellingTitle")
       : stageKey
         ? t(stageKey)
         : localizeBackendText(currentProgress.stage) || t("videoInfo");
@@ -526,25 +582,35 @@ function renderJob(job) {
   currentJob = job;
   viewError = null;
   const jobStatus = job.status;
+  const isRunning = jobStatus === "running";
+  const isCancelling = jobStatus === "cancelling";
+  const isCancelled = jobStatus === "cancelled";
   const isMp3 = job.download_type === "mp3";
   panel.hidden = false;
-  panel.className = `job-panel is-${jobStatus === "running" ? "running" : jobStatus === "completed" ? "completed" : "failed"}`;
-  title.textContent = jobStatus === "running"
+  panel.className = `job-panel is-${isRunning || isCancelling ? "running" : jobStatus === "completed" ? "completed" : isCancelled ? "cancelled" : "failed"}`;
+  title.textContent = isCancelling
+    ? t("cancellingTitle")
+    : isRunning
     ? isMp3 ? t("runningAudioTitle") : t("runningVideoTitle")
-    : jobStatus === "completed" ? t("completedTitle") : t("failedTitle");
-  description.textContent = jobStatus === "running"
+    : jobStatus === "completed" ? t("completedTitle") : isCancelled ? t("cancelledTitle") : t("failedTitle");
+  description.textContent = isRunning || isCancelling
     ? t("runningDescription")
     : jobStatus === "completed"
       ? isMp3 ? t("completedAudioDescription") : t("completedVideoDescription")
-      : t("failedDescription");
-  status.textContent = jobStatus === "running"
-    ? t("runningStatus")
-    : jobStatus === "completed" ? t("completedStatus") : t("failedStatus");
+      : isCancelled ? t("cancelledDescription") : t("failedDescription");
+  status.textContent = isCancelling
+    ? t("cancellingStatus")
+    : isRunning
+      ? t("runningStatus")
+      : jobStatus === "completed" ? t("completedStatus") : isCancelled ? t("cancelledStatus") : t("failedStatus");
   output.textContent = localizeBackendText(job.output) || t("preparingPython");
   renderProgress(job.progress, jobStatus);
-  button.disabled = jobStatus === "running" || !ffmpegReady;
-  button.querySelector("span").textContent = jobStatus === "running" ? t("startingButton") : t("newDownload");
-  if (jobStatus !== "running") {
+  button.disabled = isRunning || isCancelling || !ffmpegReady;
+  button.querySelector("span").textContent = isRunning || isCancelling ? t("startingButton") : t("newDownload");
+  cancelButton.hidden = !isRunning && !isCancelling;
+  cancelButton.disabled = isCancelling;
+  cancelButton.textContent = isCancelling ? t("cancellingTitle") : t("cancelDownload");
+  if (!isRunning && !isCancelling) {
     if (pollingTimer) window.clearInterval(pollingTimer);
     pollingTimer = null;
   }
@@ -576,6 +642,59 @@ async function refreshStatus() {
     description.textContent = t("serverDisconnected");
   }
 }
+
+cancelButton.addEventListener("click", async () => {
+  cancelButton.disabled = true;
+  cancelButton.textContent = t("cancellingTitle");
+  try {
+    const response = await fetch("/api/cancel", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(localizeBackendText(data.error) || t("cancelFailed"));
+    }
+    renderJob(data.job);
+  } catch (error) {
+    description.textContent = error.message || t("cancelFailed");
+    cancelButton.disabled = false;
+    cancelButton.textContent = t("cancelDownload");
+  }
+});
+
+closeAppButton.addEventListener("click", async () => {
+  if (
+    currentJob
+    && (currentJob.status === "running" || currentJob.status === "cancelling")
+    && !window.confirm(t("closeConfirm"))
+  ) {
+    return;
+  }
+  closeAppButton.disabled = true;
+  closeAppButton.textContent = t("closingApp");
+  cancelButton.disabled = true;
+  try {
+    const response = await fetch("/api/shutdown", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    });
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || t("cancelFailed"));
+    }
+    description.textContent = t("closingApp");
+    if (pollingTimer) window.clearInterval(pollingTimer);
+    pollingTimer = null;
+  } catch (error) {
+    closeAppButton.disabled = false;
+    closeAppButton.textContent = t("closeApp");
+    cancelButton.disabled = false;
+    description.textContent = error.message;
+  }
+});
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
