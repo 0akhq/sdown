@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b0d15">
+    <title>SDown — Yerel video indirici</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="SDown ana sayfa" data-i18n-aria="brandHome">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M16 4v16m0 0 6-6m-6 6-6-6M6 22v4h20v-4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span>sdown<span class="brand-period">.</span></span>
+        </a>
+        <div class="topbar-actions">
+          <label class="language-picker">
+            <span data-i18n="languageLabel">Dil</span>
+            <select id="language-select" aria-label="Arayüz dili" data-i18n-aria="languageLabel">
+              <option value="en">English</option>
+              <option value="tr">Türkçe</option>
+              <option value="ru">Русский</option>
+            </select>
+          </label>
+          <span class="local-badge"><span class="status-dot"></span>0akh</span>
+        </div>
+      </header>
+
+      <section class="hero" aria-labelledby="page-title">
+        <h1 id="page-title" data-i18n-html="heroTitle">Kaliteli Videoları.<br><span>Kaliteli yazılımlar yükler.</span></h1>
+        <p class="hero-copy" data-i18n="heroCopy">0akh tarafından geliştirilmiştir.</p>
+
+        <section class="download-card" aria-label="Video indirme formu" data-i18n-aria="downloadForm">
+          <form id="download-form">
+            <label for="video-url" data-i18n="videoUrlLabel">VİDEO BAĞLANTISI</label>
+            <div class="input-row">
+              <span class="link-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M10 13.5a4.5 4.5 0 0 0 6.36 0l3-3A4.5 4.5 0 0 0 13 4.14l-1.72 1.72m2.72 4.64a4.5 4.5 0 0 0-6.36 0l-3 3A4.5 4.5 0 0 0 11 19.86l1.72-1.72" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <input id="video-url" name="url" type="url" placeholder="https://www.tiktok.com/..." data-i18n-placeholder="urlPlaceholder" autocomplete="url" required>
+              <button id="download-button" type="submit">
+                <span data-i18n="startDownload">İndirmeyi başlat</span>
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M4 10h12m0 0-5-5m5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div class="download-type-row">
+              <label for="download-type" data-i18n="downloadType">İNDİRME TÜRÜ</label>
+              <select id="download-type" name="download_type">
+                <option value="video" data-i18n="videoMp4">Video · MP4</option>
+                <option value="mp3" data-i18n="audioMp3">Ses · MP3</option>
+              </select>
+            </div>
+            <label class="cookie-option" for="use-chrome-cookies">
+              <input id="use-chrome-cookies" name="use_chrome_cookies" type="checkbox" disabled>
+              <span data-i18n="chromeCookies">YouTube için Chrome oturumunu kullan</span>
+            </label>
+            <p class="cookie-hint" data-i18n="chromeHint">Yalnızca işaretlendiğinde Chrome oturumu kullanılır. Chrome'u indirme sırasında kapalı tutun.</p>
+          </form>
+
+          <div id="ffmpeg-status" class="ffmpeg-status" role="status" aria-live="polite" data-i18n="ffmpegChecking">FFmpeg kontrol ediliyor...</div>
+
+          <div id="job-panel" class="job-panel" aria-live="polite" hidden>
+            <div class="job-heading">
+              <span id="job-icon" class="job-icon" aria-hidden="true"></span>
+              <div>
+                <strong id="job-title" data-i18n="preparingDownload">İndirme hazırlanıyor</strong>
+                <p id="job-description" data-i18n="processingLink">Bağlantı işleniyor, lütfen bekle.</p>
+              </div>
+              <span id="job-status" class="job-status" data-i18n="starting">BAŞLATILIYOR</span>
+            </div>
+            <div class="progress-meta">
+              <span id="progress-stage" data-i18n="readingVideoInfo">Video bilgileri alınıyor...</span>
+              <strong id="progress-percent" data-i18n="waiting">Bekleniyor</strong>
+            </div>
+            <div id="progress-track" class="progress-track is-indeterminate" role="progressbar" aria-label="İndirme ilerlemesi" data-i18n-aria="downloadProgress" aria-valuemin="0" aria-valuemax="100">
+              <span id="progress-bar"></span>
+            </div>
+            <div class="progress-details">
+              <span id="progress-transferred" data-i18n="waitingForSize">0 B / Boyut bekleniyor</span>
+              <span id="progress-speed"></span>
+              <span id="progress-eta" data-i18n="calculatingTime">Kalan süre hesaplanıyor</span>
+            </div>
+            <p id="progress-file" class="progress-file"></p>
+            <details class="log-details">
+              <summary data-i18n="processDetails">İşlem ayrıntıları</summary>
+              <pre id="job-output">Henüz çıktı yok.</pre>
+            </details>
+          </div>
+
+          <div class="card-divider"></div>
+          <div class="quality-row">
+            <div class="quality-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 3 5 6v5c0 4.42 2.99 8.55 7 9.5 4.01-.95 7-5.08 7-9.5V6l-7-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="quality-text">
+              <strong data-i18n="qualityNote">En iyi kullanılabilir kalite MP4 olarak indirilir.</strong>
+            </div>
+            <span class="format-pill">MP4</span>
+          </div>
+        </section>
+
+        <section class="platforms" aria-labelledby="platforms-title">
+          <div class="platforms-heading">
+            <span class="section-kicker" data-i18n="platformGuide">PLATFORM REHBERİ</span>
+            <h2 id="platforms-title" data-i18n="platformTitle">Bu yazılımdan indirebileceğiniz videolar</h2>
+            <p data-i18n="platformDisclaimer">Gerçek kullanılabilirlik yt-dlp desteğine, erişim durumuna ve platform değişikliklerine bağlıdır.</p>
+          </div>
+
+          <div class="platform-grid">
+            <article class="platform-card">
+              <h3 data-i18n="socialPlatforms">Sosyal Medya Platformları</h3>
+              <ul>
+                <li><strong>Instagram:</strong> <span data-i18n="instagramDesc">Reels videoları, IGTV, gönderi videoları ve hikayeler (story).</span></li>
+                <li><strong>TikTok:</strong> <span data-i18n="tiktokDesc">Tüm dikey kısa videolar, sesler ve kullanıcı profilleri.</span></li>
+                <li><strong>X (Twitter):</strong> <span data-i18n="xDesc">Gönderilere (tweet) yüklenen tüm videolar ve GIF'ler.</span></li>
+                <li><strong>Facebook:</strong> <span data-i18n="facebookDesc">Sayfa videoları, gruplar, Facebook Watch ve Reels.</span></li>
+                <li><strong>Reddit:</strong> <span data-i18n="redditDesc">Gönderilere gömülü videolar, v.redd.it bağlantıları ve ses birleştirmeleri.</span></li>
+                <li><strong>LinkedIn:</strong> <span data-i18n="linkedinDesc">Gönderilerde paylaşılan kurumsal ve kişisel videolar.</span></li>
+                <li><strong>Pinterest:</strong> <span data-i18n="pinterestDesc">Pin olarak yüklenmiş hareketli videolar ve fikir pinleri.</span></li>
+                <li><strong>Snapchat:</strong> <span data-i18n="snapchatDesc">Keşfet (Spotlight) videoları ve herkese açık hikayeler.</span></li>
+              </ul>
+            </article>
+
+            <article class="platform-card">
+              <h3 data-i18n="videoPlatforms">Video Paylaşım ve Yayın Platformları</h3>
+              <ul>
+                <li><strong>YouTube:</strong> <span data-i18n="youtubeDesc">Standart videolar, Shorts, oynatma listeleri, kanallar, canlı yayın kayıtları ve YouTube Music.</span></li>
+                <li><strong>Twitch:</strong> <span data-i18n="twitchDesc">Canlı yayınlar (anlık), geçmiş yayın kayıtları (VOD) ve popüler klipler.</span></li>
+                <li><strong>Kick:</strong> <span data-i18n="kickDesc">Canlı yayın akışları ve geçmiş yayınların videoları.</span></li>
+                <li><strong>Vimeo:</strong> <span data-i18n="vimeoDesc">Standart kullanıcı videoları, albümler ve şifresiz portfolyo içerikleri.</span></li>
+                <li><strong>Dailymotion:</strong> <span data-i18n="dailymotionDesc">Kanallar, çalma listeleri ve standart videolar.</span></li>
+              </ul>
+            </article>
+
+            <article class="platform-card">
+              <h3 data-i18n="audioPlatforms">Müzik ve Ses Platformları</h3>
+              <ul>
+                <li><strong>SoundCloud:</strong> <span data-i18n="soundcloudDesc">Şarkılar, albümler, çalma listeleri ve sanatçı profilleri.</span></li>
+                <li><strong>Bandcamp:</strong> <span data-i18n="bandcampDesc">Albümler, tekli şarkılar ve diskografiler.</span></li>
+                <li><strong>Mixcloud:</strong> <span data-i18n="mixcloudDesc">Radyo programları, DJ miksleri ve podcast'ler.</span></li>
+                <li><strong>Spotify:</strong> <span data-i18n="spotifyDesc">Herkese açık podcast bölümleri (müzik parçaları telif koruması nedeniyle doğrudan indirilmez).</span></li>
+              </ul>
+            </article>
+
+            <article class="platform-card">
+              <h3 data-i18n="filmPlatforms">Film, Dizi ve Anime Platformları (Şifresiz/Telif Korumasız)</h3>
+              <ul>
+                <li><strong>Crunchyroll:</strong> <span data-i18n="crunchyrollDesc">Anime bölümleri ve serileri (bölge kısıtlaması veya üyelik gerektirebilir).</span></li>
+                <li><strong>Bilibili:</strong> <span data-i18n="bilibiliDesc">Çin menşeili anime, oyun ve topluluk videoları.</span></li>
+                <li><strong>9gag:</strong> <span data-i18n="9gagDesc">Platforma yüklenen komik videolar ve GIF'ler.</span></li>
+              </ul>
+            </article>
+
+            <article class="platform-card">
+              <h3 data-i18n="newsEducation">Haber ve Eğitim Kanalları</h3>
+              <ul>
+                <li><strong>BBC / CNN / DW:</strong> <span data-i18n="newsDesc">Uluslararası haber videoları ve canlı yayın akışları.</span></li>
+                <li><strong>TED / TEDx:</strong> <span data-i18n="tedDesc">İlham verici konuşmalar, sunumlar ve konferans kayıtları.</span></li>
+                <li><strong>Udemy:</strong> <span data-i18n="udemyDesc">Satın aldığınız veya ücretsiz olan kurs videoları (hesap girişi/çerez kullanımı gerekir).</span></li>
+              </ul>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <footer class="footer">
+        <span>SDown <span class="footer-separator">/</span> <span data-i18n="footerTagline">Yerel video indirici</span></span>
+        <span data-i18n-html="footerLocation">Dosyalar uygulamanın yanındaki <code>Ultra_HD_videolar</code> klasörüne kaydedilir.</span>
+      </footer>
+    </main>
+  </body>
+</html>
