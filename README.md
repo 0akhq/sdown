@@ -11,6 +11,7 @@ SDown provides a browser-based interface backed by a small Python web server. It
 - [Features](#features)
 - [Supported sources](#supported-sources)
 - [Download and run](#download-and-run)
+- [Screenshots](#screenshots)
 - [Build from source](#build-from-source)
 - [How it works](#how-it-works)
 - [Privacy and security](#privacy-and-security)
@@ -33,6 +34,27 @@ SDown provides a browser-based interface backed by a small Python web server. It
 - **Responsive interface:** the page layout adapts to smaller screens and supports reduced-motion preferences.
 
 The web interface and README are available in English, Turkish, and Russian. Select a language from the control in the page header; the selected language is saved in the browser.
+
+## Screenshots
+
+The interface is available in English, Turkish, and Russian:
+
+<table>
+  <tr>
+    <th>English</th>
+    <th>Türkçe</th>
+  </tr>
+  <tr>
+    <td><img src="screenshots/sdown-en.png" alt="SDown interface in English" width="100%"></td>
+    <td><img src="screenshots/sdown-tr.png" alt="SDown arayüzü Türkçe" width="100%"></td>
+  </tr>
+  <tr>
+    <th colspan="2">Русский</th>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="screenshots/sdown-ru.png" alt="Интерфейс SDown на русском языке" width="75%"></td>
+  </tr>
+</table>
 
 Only one download job can run at a time. Closing the browser tab does **not** stop the SDown process or an active download.
 
