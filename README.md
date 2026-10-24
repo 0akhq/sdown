@@ -30,7 +30,7 @@ SDown provides a browser-based interface backed by a small Python web server. It
 - **Local web interface:** the app opens its interface in the default browser and serves it from `127.0.0.1`; the download request is handled on the user's computer.
 - **Responsive interface:** the page layout adapts to smaller screens and supports reduced-motion preferences.
 
-The current web interface is in Turkish; the README is available in English, Turkish, and Russian.
+The web interface and README are available in English, Turkish, and Russian. Select a language from the control in the page header; the selected language is saved in the browser.
 
 Only one download job can run at a time. Closing the browser tab does **not** stop the SDown process or an active download.
 
@@ -83,7 +83,7 @@ The supplied build script targets Windows and the existing project README specif
 
 4. When the build succeeds, the distributable is `dist\SDown.exe`.
 
-The script obfuscates `launcher.py` with PyArmor and uses PyInstaller in one-file, windowed mode. It bundles the `public` interface, yt-dlp, and imageio-ffmpeg (which supplies the bundled FFmpeg executable). `build.ps1 -Console` can be used when a console window is desired for debugging.
+The script packages the regular, readable `launcher.py` source with PyInstaller in one-file, windowed mode. It does not obfuscate or encrypt the Python code. The build bundles the `public` interface, yt-dlp, and imageio-ffmpeg (which supplies the bundled FFmpeg executable). `build.ps1 -Console` can be used when a console window is desired for debugging.
 
 To run the web application directly from source instead of building an executable, install the build requirements and yt-dlp as above, then run:
 
@@ -148,7 +148,7 @@ Close the running SDown process before building again. The script checks for the
 | `public/app.js` | Form handling, server requests, and download progress display. |
 | `public/styles.css` | Responsive dark interface styles. |
 | `index.py` | Separate command-line downloader retained alongside the web application. |
-| `build.ps1` | Windows PyArmor/PyInstaller build script. |
+| `build.ps1` | Windows PyInstaller build script. |
 | `requirements-build.txt` | Python packaging and bundled-FFmpeg build dependencies. |
 | `start.bat` | Starts the already-built `dist\SDown.exe`. |
 
@@ -156,9 +156,8 @@ Close the running SDown process before building again. The script checks for the
 
 - SDown is provided as-is. No specific platform, URL, quality, or uninterrupted availability is guaranteed.
 - Users are responsible for complying with applicable laws, copyright, platform terms, and privacy requirements.
-- PyArmor obfuscation does not make an executable impossible to reverse engineer. PyInstaller's one-file mode extracts bundled files to a temporary location while running.
-- The existing build was made with PyArmor's trial version. Its output may be subject to PyArmor's non-commercial trial terms. Obtain an appropriate PyArmor license before commercial distribution.
-- yt-dlp, FFmpeg/imageio-ffmpeg, PyInstaller, PyArmor, and other bundled components remain subject to their respective licenses. Review each project's license and distribution requirements before publishing or redistributing a build.
+- Python source code is intentionally not obfuscated or encrypted. PyInstaller's one-file mode extracts bundled files to a temporary location while running; packaging as an EXE is not source-code protection.
+- yt-dlp, FFmpeg/imageio-ffmpeg, PyInstaller, and other bundled components remain subject to their respective licenses. Review each project's license and distribution requirements before publishing or redistributing a build.
 
 ---
 
@@ -170,7 +169,7 @@ SDown, küçük bir Python web sunucusunun desteklediği tarayıcı arayüzünü
 
 > **SDown'u sorumlu biçimde kullanın.** Yalnızca size ait olan, indirme izniniz bulunan veya başka şekilde yasal olarak indirme hakkına sahip olduğunuz içerikleri indirin. Telif haklarına, platform koşullarına, gizliliğe ve erişim kontrollerine uyun. SDown bağımsız bir projedir; aşağıda listelenen platformlarla bağlantılı veya onlar tarafından onaylanmış değildir.
 
-Web arayüzünün mevcut dili Türkçedir; README İngilizce, Türkçe ve Rusça olarak hazırlanmıştır.
+Web arayüzü ve README İngilizce, Türkçe ve Rusça dillerinde kullanılabilir. Sayfa başlığındaki dil seçicisinden dili değiştirebilirsiniz; seçim tarayıcıda saklanır.
 
 ## İçindekiler
 
@@ -247,7 +246,7 @@ Sağlanan derleme betiği Windows içindir ve projenin mevcut README dosyası **
 
 4. Derleme başarılı olursa dağıtılabilir dosya `dist\SDown.exe` olur.
 
-Betik `launcher.py` dosyasını PyArmor ile karartır ve PyInstaller'ı tek dosyalık, konsol penceresiz modda çalıştırır. `public` arayüzünü, yt-dlp'yi ve paketlenmiş FFmpeg yürütülebilir dosyasını sağlayan imageio-ffmpeg'i ekler. Hata ayıklama için konsol pencereli derleme isterseniz `build.ps1 -Console` kullanabilirsiniz.
+Betik, normal ve okunabilir `launcher.py` kaynak kodunu PyInstaller ile tek dosyalık, konsol penceresiz biçimde paketler. Python kodunu karartmaz veya şifrelemez. `public` arayüzünü, yt-dlp'yi ve paketlenmiş FFmpeg yürütülebilir dosyasını sağlayan imageio-ffmpeg'i ekler. Hata ayıklama için konsol pencereli derleme isterseniz `build.ps1 -Console` kullanabilirsiniz.
 
 EXE oluşturmadan web uygulamasını kaynak koddan çalıştırmak için yukarıdaki derleme bağımlılıklarını ve yt-dlp'yi kurduktan sonra:
 
@@ -312,7 +311,7 @@ Yeniden derlemeden önce çalışan SDown sürecini kapatın. Betik `dist\SDown.
 | `public/app.js` | Form işlemleri, sunucu istekleri ve indirme ilerlemesi gösterimi. |
 | `public/styles.css` | Duyarlı koyu arayüz stilleri. |
 | `index.py` | Web uygulamasının yanında tutulan ayrı komut satırı indirme aracı. |
-| `build.ps1` | Windows PyArmor/PyInstaller derleme betiği. |
+| `build.ps1` | Windows PyInstaller derleme betiği. |
 | `requirements-build.txt` | Python paketleme ve paketlenmiş FFmpeg derleme bağımlılıkları. |
 | `start.bat` | Önceden oluşturulmuş `dist\SDown.exe` dosyasını başlatır. |
 
@@ -320,9 +319,8 @@ Yeniden derlemeden önce çalışan SDown sürecini kapatın. Betik `dist\SDown.
 
 - SDown olduğu gibi sunulur. Belirli bir platform, URL, kalite veya kesintisiz erişim garantisi yoktur.
 - Yürürlükteki yasalara, telif haklarına, platform koşullarına ve gizlilik gereksinimlerine uymak kullanıcının sorumluluğundadır.
-- PyArmor ile kod karartma, bir EXE'nin tersine mühendislikle incelenmesini imkânsız hâle getirmez. PyInstaller'ın tek dosya modu, çalışırken paketlenmiş dosyaları geçici bir konuma çıkarır.
-- Mevcut derleme PyArmor'ın deneme sürümüyle yapılmıştır. Çıktısı PyArmor'ın ticari olmayan deneme sürümü koşullarına tabi olabilir. Ticari dağıtımdan önce uygun bir PyArmor lisansı edinin.
-- yt-dlp, FFmpeg/imageio-ffmpeg, PyInstaller, PyArmor ve paketlenen diğer bileşenler kendi lisanslarına tabidir. Derleme veya dağıtımı yayımlamadan önce her projenin lisans ve dağıtım koşullarını inceleyin.
+- Python kaynak kodu özellikle karartılmaz veya şifrelenmez. PyInstaller'ın tek dosya modu, çalışırken paketlenmiş dosyaları geçici bir konuma çıkarır; EXE olarak paketlemek kaynak kodu korumaz.
+- yt-dlp, FFmpeg/imageio-ffmpeg, PyInstaller ve paketlenen diğer bileşenler kendi lisanslarına tabidir. Derleme veya dağıtımı yayımlamadan önce her projenin lisans ve dağıtım koşullarını inceleyin.
 
 ---
 
@@ -334,7 +332,7 @@ SDown предоставляет интерфейс в браузере, кот�
 
 > **Используйте SDown ответственно.** Загружайте только материалы, которые принадлежат вам, на загрузку которых у вас есть разрешение или которые вы вправе сохранять по закону. Соблюдайте авторские права, правила платформ, требования конфиденциальности и ограничения доступа. SDown — независимый проект, не связанный с перечисленными ниже платформами и не одобренный ими.
 
-Текущий веб-интерфейс доступен на турецком языке; README подготовлен на английском, турецком и русском языках.
+Веб-интерфейс и README доступны на английском, турецком и русском языках. Выберите язык в верхней части страницы; выбор сохраняется в браузере.
 
 ## Содержание
 
@@ -411,7 +409,7 @@ SDown предоставляет интерфейс в браузере, кот�
 
 4. После успешной сборки готовый файл для распространения находится в `dist\SDown.exe`.
 
-Сценарий обфусцирует `launcher.py` с помощью PyArmor и запускает PyInstaller в однофайловом режиме без консольного окна. В сборку включаются интерфейс `public`, yt-dlp и imageio-ffmpeg, предоставляющий исполняемый файл FFmpeg. Для сборки с консольным окном, например для отладки, используйте `build.ps1 -Console`.
+Сценарий упаковывает обычный, читаемый исходный файл `launcher.py` с помощью PyInstaller в один EXE без консольного окна. Python-код не обфусцируется и не шифруется. В сборку включаются интерфейс `public`, yt-dlp и imageio-ffmpeg, предоставляющий исполняемый файл FFmpeg. Для сборки с консольным окном, например для отладки, используйте `build.ps1 -Console`.
 
 Чтобы запустить веб-приложение непосредственно из исходного кода без создания EXE, после установки зависимостей сборки и yt-dlp выполните:
 
@@ -476,7 +474,7 @@ Stop-Process -Id <PID> -Force
 | `public/app.js` | Обработка формы, запросы к серверу и отображение хода загрузки. |
 | `public/styles.css` | Адаптивные стили тёмного интерфейса. |
 | `index.py` | Отдельный скрипт командной строки, сохранённый рядом с веб-приложением. |
-| `build.ps1` | Сценарий сборки для Windows с PyArmor и PyInstaller. |
+| `build.ps1` | Сценарий сборки для Windows с PyInstaller. |
 | `requirements-build.txt` | Зависимости сборки Python-пакета и встроенного FFmpeg. |
 | `start.bat` | Запуск уже собранного `dist\SDown.exe`. |
 
@@ -484,6 +482,5 @@ Stop-Process -Id <PID> -Force
 
 - SDown предоставляется «как есть». Не гарантируется работа с определённой платформой, ссылкой или качеством, а также бесперебойная доступность.
 - Пользователь отвечает за соблюдение применимого законодательства, авторских прав, правил платформ и требований конфиденциальности.
-- Обфускация PyArmor не делает EXE невосприимчивым к обратному анализу. В однофайловом режиме PyInstaller извлекает внутренние файлы во временную папку во время работы.
-- Текущая сборка создана с пробной версией PyArmor. На её результат могут распространяться условия пробной версии для некоммерческого использования. Для коммерческого распространения приобретите подходящую лицензию PyArmor.
-- На yt-dlp, FFmpeg/imageio-ffmpeg, PyInstaller, PyArmor и другие включённые компоненты распространяются их собственные лицензии. Перед публикацией или распространением сборки ознакомьтесь с лицензиями и условиями распространения каждого проекта.
+- Исходный код Python намеренно не обфусцируется и не шифруется. В однофайловом режиме PyInstaller извлекает включённые файлы во временную папку во время работы; упаковка в EXE не защищает исходный код.
+- На yt-dlp, FFmpeg/imageio-ffmpeg, PyInstaller и другие включённые компоненты распространяются их собственные лицензии. Перед публикацией или распространением сборки ознакомьтесь с лицензиями и условиями распространения каждого проекта.
