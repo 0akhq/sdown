@@ -13,6 +13,7 @@ SDown provides a browser-based interface backed by a small Python web server. It
 - [Download and run](#download-and-run)
 - [Build from source](#build-from-source)
 - [How it works](#how-it-works)
+- [Privacy and security](#privacy-and-security)
 - [Troubleshooting](#troubleshooting)
 - [Project files](#project-files)
 - [Limitations and licensing](#limitations-and-licensing)
@@ -28,6 +29,7 @@ SDown provides a browser-based interface backed by a small Python web server. It
 - **Optional YouTube browser cookies:** the Chrome-session checkbox is enabled only for YouTube URLs. Cookies are supplied to yt-dlp only when the option is checked.
 - **Bundled FFmpeg:** the app checks for a working system FFmpeg first and falls back to the FFmpeg executable packaged with the app.
 - **Local web interface:** the app opens its interface in the default browser and serves it from `127.0.0.1`; the download request is handled on the user's computer.
+- **Cancellation and shutdown:** cancel an active download or close SDown from the interface. Active FFmpeg child processes are terminated and the download worker is given time to finish cleanup.
 - **Responsive interface:** the page layout adapts to smaller screens and supports reduced-motion preferences.
 
 The web interface and README are available in English, Turkish, and Russian. Select a language from the control in the page header; the selected language is saved in the browser.
@@ -91,11 +93,24 @@ To run the web application directly from source instead of building an executabl
 python launcher.py
 ```
 
-The launcher opens the local interface automatically. To suppress automatic browser opening, set `SDOWN_NO_BROWSER=1` in the process environment before starting it. The server uses port `3000` by default (or the `PORT` environment variable); if that port is unavailable, it tries an available port.
+If yt-dlp is missing, the launcher shows an installation hint instead of a Python traceback. Install it with `python -m pip install yt-dlp`.
+
+The launcher opens the local interface automatically. To suppress automatic browser opening, set `SDOWN_NO_BROWSER=1` in the process environment before starting it. The server uses port `3000` by default (or the `PORT` environment variable); a non-numeric or out-of-range `PORT` falls back to `3000`, and a busy port triggers automatic selection. Set `PORT=0` to request an automatically selected port.
+
+Download links must be valid `http` or `https` URLs with a hostname and, if specified, a valid port. URLs containing a username or password are rejected. SDown does not maintain a fixed list of allowed websites; actual source support is determined by yt-dlp.
+
+## Privacy and security
+
+- The web server binds only to `127.0.0.1`. It checks the `Host` header on requests and requires the exact local page origin for download requests; requests from other web origins are rejected. The selected port is included in the origin check when the default port is busy.
+- SDown does not send downloads through an SDown-operated server. yt-dlp connects from your computer to the URL you submit and to the media host(s) required by that platform. Normal DNS, network, and platform logging may apply.
+- The interface requests its fonts from Google Fonts. If you do not want this browser request, disconnect from the internet or use a local font/privacy control; the page has fallback fonts.
+- Chrome cookies are opt-in: they are passed to yt-dlp only when you enable the checkbox for a YouTube URL. SDown does not configure a cookie-file output or upload your cookies to an SDown server. yt-dlp reads them locally from Chrome for the download; keep Chrome closed while it does so. The destination platform receives requests authenticated with that session.
+- Download status and recent process output are held in the local application process while it runs. SDown does not write application logs to a remote service. Common network, access, unsupported-media, and FFmpeg failures receive user-friendly messages. Diagnostic output is sanitized to redact credentials, cookies, and common token values; review it before sharing.
+- The local interface is not an authentication boundary against other software already running as your Windows user. Use the application only on a trusted computer and close SDown when finished.
 
 ### Closing the application before rebuilding
 
-Closing the browser tab does not close the background `SDown.exe` process. Before rebuilding, close the app from **Task Manager → Details**. Alternatively, inspect the process and stop its specific PID in PowerShell:
+Closing the browser tab does not close the background `SDown.exe` process. Use **Close SDown** in the page header to stop the app; if a download is active, confirm that it should be cancelled. You can also cancel just the current download with its **Cancel download** button. Before rebuilding, close the app from **Task Manager → Details** if needed. Alternatively, inspect the process and stop its specific PID in PowerShell:
 
 ```powershell
 Get-Process -Name SDown | Format-Table Id, Path
@@ -178,6 +193,7 @@ Web arayüzü ve README İngilizce, Türkçe ve Rusça dillerinde kullanılabili
 - [İndirme ve çalıştırma](#indirme-ve-çalıştırma)
 - [Kaynak koddan derleme](#kaynak-koddan-derleme)
 - [Nasıl çalışır?](#nasıl-çalışır)
+- [Gizlilik ve güvenlik](#gizlilik-ve-güvenlik)
 - [Sorun giderme](#sorun-giderme)
 - [Proje dosyaları](#proje-dosyaları)
 - [Sınırlamalar ve lisanslama](#sınırlamalar-ve-lisanslama)
@@ -194,6 +210,7 @@ Web arayüzü ve README İngilizce, Türkçe ve Rusça dillerinde kullanılabili
 - **Uygulamayla gelen FFmpeg:** önce sistemde çalışan FFmpeg'i kontrol eder; bulunamazsa paketlenmiş FFmpeg'i kullanır.
 - **Yerel web arayüzü:** arayüzü varsayılan tarayıcıda açar ve `127.0.0.1` adresinde sunar; indirme işlemi kullanıcının bilgisayarında yürütülür.
 - **Uyarlanabilir arayüz:** küçük ekranlara uyum sağlar ve azaltılmış hareket tercihlerini destekler.
+- **İptal ve güvenli kapatma:** devam eden indirmeyi iptal edebilir veya arayüzden SDown'u kapatabilirsiniz. Etkin FFmpeg alt süreçleri sonlandırılır ve indirme iş parçacığına temiz kapanması için süre tanınır.
 
 Aynı anda yalnızca bir indirme işi çalışabilir. Tarayıcı sekmesini kapatmak SDown sürecini veya devam eden indirmeyi **durdurmaz**.
 
@@ -254,11 +271,24 @@ EXE oluşturmadan web uygulamasını kaynak koddan çalıştırmak için yukarı
 python launcher.py
 ```
 
-Başlatıcı yerel arayüzü otomatik açar. Tarayıcının otomatik açılmasını önlemek için başlatmadan önce süreç ortamında `SDOWN_NO_BROWSER=1` ayarlayın. Sunucu varsayılan olarak `3000` portunu (veya `PORT` ortam değişkenini) kullanır; port meşgulse kullanılabilir başka bir port dener.
+yt-dlp kurulu değilse başlatıcı Python traceback'i yerine kurulum talimatı gösterir. Kurmak için `python -m pip install yt-dlp` komutunu çalıştırın.
+
+Başlatıcı yerel arayüzü otomatik açar. Tarayıcının otomatik açılmasını önlemek için başlatmadan önce süreç ortamında `SDOWN_NO_BROWSER=1` ayarlayın. Sunucu varsayılan olarak `3000` portunu (veya `PORT` ortam değişkenini) kullanır; sayı olmayan ya da aralık dışındaki `PORT` değerinde `3000` güvenli varsayılanına döner, port meşgulse otomatik olarak başka bir port seçer. Otomatik port seçmek için `PORT=0` kullanın.
+
+İndirme bağlantısı, host bilgisi bulunan geçerli bir `http` veya `https` URL'si olmalıdır; belirtilen port geçerli aralıkta olmalıdır. URL içinde kullanıcı adı veya parola kabul edilmez. SDown sabit bir site izin listesi kullanmaz; kaynak desteği yt-dlp'nin güncel desteğine bağlıdır.
+
+## Gizlilik ve güvenlik
+
+- Web sunucusu yalnızca `127.0.0.1` adresine bağlanır. İsteklerde `Host` başlığını denetler ve indirme isteklerinde yerel sayfanın tam `Origin` değerini zorunlu tutar; diğer web kaynaklarından gelen istekler reddedilir. Varsayılan port doluysa kullanılan port da bu kontrolde dikkate alınır.
+- SDown indirmeleri kendi sunucusu üzerinden yönlendirmez. yt-dlp, bilgisayarınızdan girdiğiniz URL'ye ve platformun gerektirdiği medya sunucularına bağlanır. Normal DNS, ağ ve platform kayıtları geçerli olabilir.
+- Arayüz yazı tiplerini Google Fonts'tan ister. Bu tarayıcı isteğini istemiyorsanız internet bağlantısını kesin veya yerel yazı tipi/gizlilik denetimi kullanın; sayfada yedek yazı tipleri bulunur.
+- Chrome çerezleri isteğe bağlıdır: yt-dlp'ye yalnızca YouTube bağlantısında onay kutusunu etkinleştirirseniz verilir. SDown çerez dosyasına yazma ayarlamaz ve çerezleri SDown sunucusuna yüklemez. yt-dlp indirme sırasında çerezleri yerel olarak Chrome'dan okur; bu sırada Chrome'u kapalı tutun. Hedef platforma bu oturumla kimliği doğrulanmış istekler gönderilir.
+- İndirme durumu ve yakın zamandaki işlem çıktısı uygulama çalışırken yerel süreç belleğinde tutulur. SDown uygulama günlüklerini uzak bir hizmete göndermez. Yaygın ağ, erişim, desteklenmeyen medya ve FFmpeg hataları anlaşılır mesajlarla gösterilir. Tanılama çıktısında kimlik bilgileri, çerezler ve yaygın token değerleri maskelenir; yine de paylaşmadan önce gözden geçirin.
+- Yerel arayüz, aynı Windows kullanıcısı olarak çalışan diğer yazılımlara karşı bir kimlik doğrulama sınırı değildir. Uygulamayı güvenilir bir bilgisayarda kullanın ve işiniz bittiğinde SDown'u kapatın.
 
 ### Yeniden derlemeden önce uygulamayı kapatma
 
-Tarayıcı sekmesini kapatmak arka plandaki `SDown.exe` sürecini kapatmaz. Yeniden derlemeden önce uygulamayı **Görev Yöneticisi → Ayrıntılar** bölümünden kapatın. Alternatif olarak PowerShell'de süreci inceleyip belirli PID'yi durdurun:
+Tarayıcı sekmesini kapatmak arka plandaki `SDown.exe` sürecini kapatmaz. Uygulamayı durdurmak için sayfa başlığındaki **SDown'u kapat** düğmesini kullanın; indirme sürüyorsa iptalini onaylamanız istenir. Yalnızca indirmeyi iptal etmek için **İndirmeyi iptal et** düğmesini kullanın. Yeniden derlemeden önce gerekirse uygulamayı **Görev Yöneticisi → Ayrıntılar** bölümünden kapatın. Alternatif olarak PowerShell'de süreci inceleyip belirli PID'yi durdurun:
 
 ```powershell
 Get-Process -Name SDown | Format-Table Id, Path
@@ -341,6 +371,7 @@ SDown предоставляет интерфейс в браузере, кот�
 - [Загрузка и запуск](#загрузка-и-запуск)
 - [Сборка из исходного кода](#сборка-из-исходного-кода)
 - [Как это работает](#как-это-работает)
+- [Конфиденциальность и безопасность](#конфиденциальность-и-безопасность)
 - [Устранение неполадок](#устранение-неполадок)
 - [Файлы проекта](#файлы-проекта)
 - [Ограничения и лицензирование](#ограничения-и-лицензирование)
@@ -357,6 +388,7 @@ SDown предоставляет интерфейс в браузере, кот�
 - **Встроенный FFmpeg:** сначала проверяется работоспособный FFmpeg в системе; если он не найден, используется версия, включённая в приложение.
 - **Локальный веб-интерфейс:** открывает интерфейс в браузере по умолчанию и обслуживает его на `127.0.0.1`; загрузка выполняется на компьютере пользователя.
 - **Адаптивный интерфейс:** подстраивается под небольшие экраны и учитывает системную настройку уменьшения анимации.
+- **Отмена и безопасное завершение:** можно отменить активную загрузку или закрыть SDown через интерфейс. Активные дочерние процессы FFmpeg завершаются, а потоку загрузки даётся время для очистки.
 
 Одновременно может выполняться только одна задача загрузки. Закрытие вкладки браузера **не** завершает процесс SDown и активную загрузку.
 
@@ -417,11 +449,24 @@ SDown предоставляет интерфейс в браузере, кот�
 python launcher.py
 ```
 
-Запускающий модуль автоматически открывает локальный интерфейс. Чтобы не открывать браузер автоматически, задайте `SDOWN_NO_BROWSER=1` в окружении процесса перед запуском. По умолчанию сервер использует порт `3000` (или значение переменной окружения `PORT`); если порт занят, он пытается выбрать свободный.
+Если yt-dlp не установлен, запускающий модуль показывает инструкцию по установке вместо трассировки Python. Установите его командой `python -m pip install yt-dlp`.
+
+Запускающий модуль автоматически открывает локальный интерфейс. Чтобы не открывать браузер автоматически, задайте `SDOWN_NO_BROWSER=1` в окружении процесса перед запуском. По умолчанию сервер использует порт `3000` (или значение переменной окружения `PORT`); при нечисловом или выходящем за допустимый диапазон значении используется безопасный порт `3000`, а если порт занят — выбирается другой автоматически. Укажите `PORT=0`, чтобы запросить автоматический выбор порта.
+
+Ссылка для загрузки должна быть корректным URL `http` или `https` с именем хоста и допустимым портом, если он указан. URL с именем пользователя или паролем отклоняются. SDown не использует фиксированный список разрешённых сайтов: поддержка источника определяется текущими возможностями yt-dlp.
+
+## Конфиденциальность и безопасность
+
+- Веб-сервер привязывается только к `127.0.0.1`. Он проверяет заголовок `Host` каждого запроса и требует точное значение локального `Origin` для запросов загрузки; запросы с других веб-источников отклоняются. Если порт по умолчанию занят, проверка учитывает фактически выбранный порт.
+- SDown не передаёт загрузки через серверы SDown. yt-dlp подключается с вашего компьютера к указанной ссылке и к медиа-серверам, необходимым платформе. Обычные DNS-, сетевые журналы и журналы платформ могут применяться.
+- Интерфейс загружает шрифты из Google Fonts. Чтобы не выполнять этот запрос браузера, отключите интернет или используйте локальные настройки шрифтов/конфиденциальности; у страницы есть резервные шрифты.
+- Cookies Chrome используются только по явному выбору: они передаются yt-dlp, только если флажок включён для ссылки YouTube. SDown не настраивает запись cookies в файл и не отправляет их на сервер SDown. Во время загрузки yt-dlp читает cookies локально из Chrome; на это время закройте Chrome. Запросы с этой авторизованной сессией получает целевая платформа.
+- Состояние загрузки и недавний вывод процесса хранятся в памяти локального процесса приложения, пока оно работает. SDown не отправляет журналы приложения в удалённый сервис. Типичные ошибки сети, доступа, неподдерживаемых форматов и FFmpeg отображаются понятными сообщениями. В диагностическом выводе маскируются учётные данные, cookies и распространённые значения токенов; перед публикацией всё равно проверьте журнал.
+- Локальный интерфейс не является границей аутентификации для других программ, работающих от имени того же пользователя Windows. Используйте приложение на доверенном компьютере и закрывайте SDown после работы.
 
 ### Закрытие приложения перед повторной сборкой
 
-Закрытие вкладки браузера не завершает фоновый процесс `SDown.exe`. Перед повторной сборкой закройте приложение через **Диспетчер задач → Подробности**. Либо найдите процесс и завершите его по конкретному PID в PowerShell:
+Закрытие вкладки браузера не завершает фоновый процесс `SDown.exe`. Для завершения приложения используйте кнопку **Закрыть SDown** в заголовке страницы; если загрузка выполняется, потребуется подтвердить её отмену. Чтобы отменить только текущую загрузку, нажмите **Отменить загрузку**. Перед повторной сборкой при необходимости закройте приложение через **Диспетчер задач → Подробности**. Либо найдите процесс и завершите его по конкретному PID в PowerShell:
 
 ```powershell
 Get-Process -Name SDown | Format-Table Id, Path
