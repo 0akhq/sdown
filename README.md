@@ -1,14 +1,14 @@
 # SDown
 
-# SDown
-
 > A lightweight, locally hosted video and audio downloader for Windows.
 
-[🇬🇧 English](README.md) · [🇹🇷 Türkçe](README.tr.md) · [🇷🇺 Русский](README.ru.md)
+**Languages:** 🇬🇧 English · 🇹🇷 Türkçe · 🇷🇺 Русский
 
 ---
 
 ## English
+
+A lightweight, locally hosted video and audio downloader for Windows.
 
 SDown provides a browser-based interface backed by a small Python web server. It uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) to retrieve media from supported URLs and FFmpeg to merge or convert media when needed. The packaged Windows executable includes the web interface and an FFmpeg build, so end users do not need to install Python, Node.js, or FFmpeg separately.
 
