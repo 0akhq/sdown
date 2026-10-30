@@ -4,8 +4,6 @@
 ## Türkçe README
 ## Русский README
 
-<hr>
-
 ## English
 
 **A lightweight, locally hosted video and audio downloader for Windows.**
