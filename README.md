@@ -2,8 +2,9 @@
 
 > A lightweight, locally hosted video and audio downloader for Windows.
 
-[Rusça](https://github.com/0akhq/sdown/blob/main/README.md#%D1%80%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)
 **Languages:** 🇬🇧 English · 🇹🇷 Türkçe · 🇷🇺 Русский
+
+English - Türkçe - [Russian](https://github.com/0akhq/sdown/blob/main/README.md#%D1%80%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)
 
 ---
 
